@@ -1,105 +1,410 @@
- 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pesquisa de Satisfação – BBConsultores Summit 2025</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2em;
-      background-color: #f9f9f9;
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Pesquisa de Satisfação – BBConsultores Summit 2025</title>
+<meta content="light dark" name="color-scheme"/>
+<style>
+    /* -----------------------------------------------------------
+       Design tokens
+    ----------------------------------------------------------- */
+    :root{
+      --azul:#465eff;            /* barra superior solicitada */
+      --azul-esc:#3b52e6;        /* variação para hover/contraste */
+      --amarelo:#ffcc00;         /* estrelas */
+      --tx:#0f172a;
+      --tx-2:#475569;
+      --bg:#f6f8fc;
+      --card:#ffffff;
+      --borda:#e5e7eb;
+      --shadow:0 10px 26px rgba(0,0,0,.08);
+      --radius:16px;
+      --radius-sm:12px;
+      --wrap:980px;
+      --focus:#2563eb;
+      --estrela-contorno:#000000;
+      --estrela-vazia-opacidade:.35; /* estrelas "apagadas" */
     }
-    h1, h2, h3 {
-      color: #003366;
+    @media (prefers-color-scheme: light){
+      :root{
+        --tx:#e5e7eb; --tx-2:#a3aab8; --bg:#0b1220; --card:#0e1628; --borda:#1e293b;
+      }
     }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1em;
-      max-width: 600px;
+
+    /* -----------------------------------------------------------
+       Base
+    ----------------------------------------------------------- */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font:16px/1.55 "Segoe UI", Segoe UI, system-ui, -apple-system, Roboto, Inter, Arial, sans-serif;
+      color:var(--tx);
+      background:var(--bg);
     }
-    label {
-      font-weight: bold;
+    .wrap{max-width:var(--wrap); margin:0 auto; padding:0 16px}
+
+    /* -----------------------------------------------------------
+       Hero
+    ----------------------------------------------------------- */
+    header.hero{
+      background:var(--azul);
+      color:#fff;
+      padding:36px 0 26px;
+      box-shadow:var(--shadow);
     }
-    input[type="text"],
-    input[type="number"],
-    textarea {
-      padding: 0.5em;
-      font-size: 1em;
-      width: 100%;
-      box-sizing: border-box;
+    .hero h1{margin:0 0 6px; font-size:clamp(22px,3.4vw,34px)}
+    .hero .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#fff; color:#111; font-weight:700;
+      border-radius:999px; padding:6px 12px; font-size:12px;
+      margin-bottom:10px;
+      border:1px solid #ffffff66;
     }
-    button {
-      padding: 0.7em;
-      background-color: #003366;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 1em;
+    .hero .sub{margin:0; color:#eef2ff}
+
+    /* -----------------------------------------------------------
+       Card/Form
+    ----------------------------------------------------------- */
+    main{padding:26px 0 60px}
+    .card{
+      background:var(--card);
+      border:1px solid var(--borda);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
     }
-    button:hover {
-      background-color: #0055a5;
+    .card h2{margin:0 0 10px; font-size:22px}
+    .note{font-size:12px; color:var(--tx-2); margin-top:8px}
+
+    form.survey{display:grid; gap:16px}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:720px){ .grid2{grid-template-columns:1fr} }
+
+    label.top{font-weight:600; display:block; margin-bottom:6px}
+    input[type="text"], textarea{
+      width:100%; border:1px solid var(--borda); background:#fff;
+      border-radius:12px; padding:10px; font:inherit; color:inherit;
     }
-    footer {
-      margin-top: 2em;
-      font-size: 0.9em;
-      color: #666;
+    textarea{min-height:120px; resize:vertical}
+    @media (prefers-color-scheme: light){
+      input[type="text"], textarea{background:#0e1628}
     }
-  </style>
+
+    /* -----------------------------------------------------------
+       Linhas de avaliação (estrelas acessíveis por radio)
+    ----------------------------------------------------------- */
+    .row{
+      display:grid; gap:12px; align-items:center;
+      grid-template-columns:minmax(210px, 340px) 1fr;
+      padding:10px 0; border-bottom:1px dashed var(--borda);
+    }
+    .row:last-child{border-bottom:none}
+    .label strong{font-weight:700}
+    .hint{font-size:12px; color:var(--tx-2); font-weight:400}
+
+    .rating{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      background:linear-gradient(180deg,#ffffff, #f9fbff);
+      border:1px solid var(--borda); border-radius:var(--radius-sm);
+      padding:8px 10px;
+    }
+    .value-badge{
+      display:inline-flex; align-items:center; gap:6px;
+      background:#eef2ff; color:#1e293b; border:1px solid var(--borda);
+      padding:6px 10px; border-radius:999px; font-size:12px; font-weight:600;
+    }
+    @media (prefers-color-scheme: light){
+      .value-badge{ background:#10203f; color:#e5e7eb }
+    }
+
+    /* Estrelas (radios 5→1 com direction:rtl) */
+    .stars{
+      display:inline-flex; gap:6px; direction:rtl;
+    }
+    .stars input{ display:none; }
+    .stars label{
+      font-size:30px;
+      cursor:pointer; padding:2px 4px; line-height:1;
+      /* Estrela amarela com contorno preto (via text-shadow) */
+      color:var(--amarelo);
+      text-shadow:
+        -1px -1px 0 var(--estrela-contorno),
+         1px -1px 0 var(--estrela-contorno),
+        -1px  1px 0 var(--estrela-contorno),
+         1px  1px 0 var(--estrela-contorno),
+         0   -2px 0 var(--estrela-contorno),
+         0    2px 0 var(--estrela-contorno),
+        -2px  0   0 var(--estrela-contorno),
+         2px  0   0 var(--estrela-contorno);
+      opacity:var(--estrela-vazia-opacidade);
+      transition:transform .06s ease, opacity .12s ease;
+    }
+    .stars label:hover{ transform:translateY(-1px) scale(1.05); }
+    /* Hover: destaca atual e anteriores */
+    .stars label:hover,
+    .stars label:hover ~ label{ opacity:1; }
+
+    /* Selecionado: estrela ativa e anteriores em opacidade 1 */
+    .stars input:checked ~ label{ opacity:1; }
+
+    /* Foco acessível (no input) */
+    .stars input:focus + label{
+      outline:2px solid var(--focus); outline-offset:3px; border-radius:6px;
+    }
+
+    /* -----------------------------------------------------------
+       NPS (0–10)
+    ----------------------------------------------------------- */
+    .nps-block{
+      display:grid; gap:8px;
+    }
+    .nps-options{
+      display:flex; gap:6px; flex-wrap:wrap;
+    }
+    .nps-options input{ display:none }
+    .nps-options label{
+      min-width:36px; padding:8px 10px; text-align:center; user-select:none;
+      border:1px solid var(--borda); border-radius:10px; cursor:pointer;
+      background:#fff; font-weight:700;
+      transition:transform .06s ease, background .12s ease, border-color .12s ease;
+    }
+    .nps-options label:hover{ transform:translateY(-1px) }
+    .nps-options input:checked + label{
+      background:var(--azul); color:#fff; border-color:var(--azul-esc);
+    }
+    .nps-scale{
+      display:flex; justify-content:space-between; font-size:12px; color:var(--tx-2);
+    }
+
+    /* -----------------------------------------------------------
+       Ações / Rodapé
+    ----------------------------------------------------------- */
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px }
+    .btn{
+      appearance:none; border:none; border-radius:999px; padding:10px 16px;
+      font-weight:700; cursor:pointer; background:#111827; color:#fff;
+      box-shadow:var(--shadow);
+    }
+    .btn.secondary{ background:#334155 }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed }
+
+    footer{margin-top:18px; font-size:12px; color:var(--tx-2); text-align:center}
+  
+button {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background-color: #e0e0e0;
+}
+
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(100, 100, 255, 0.4);
+    transform: scale(1.03);
+}
+</style>
 </head>
-<body>
-  <h1>BBConsultores Summit 2025</h1>
-  <h2>Pesquisa de Satisfação</h2>
-  <h3>⭐ Formulário de Avaliação</h3>
+<body style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<!-- Cabeçalho -->
+<header class="hero">
+<div class="wrap" style="background-color: #465eff; padding: 20px; text-align: center;">
+<span class="badge" style="background-color: #fcfc30;">BBConsultores Summit 2025</span>
+<h1 style="font-size: 160%; color: white; text-align: center;">Pesquisa de Satisfação</h1>
+</div>
+</header>
+<main class="wrap">
+<section aria-labelledby="tituloForm" class="card" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<h2 id="tituloForm">⭐ Formulário de Avaliação</h2>
+<form action="https://defaultffc0be44315f4479b12f56afe6eded.d6.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/35b3ee4996e447c6bfa55eedb0838d17/triggers/manual/paths/invoke?api-version=1" aria-describedby="ajudaForm" class="survey" method="post" style="background-color: white;color: black;font-family: Verdana, sans-serif;">
+<!-- Identificação opcional -->
+<div class="grid2" style="background-color: white;color: black;font-family: Verdana, sans-serif;">
+<div style="background-color: white;color: black;font-family: Verdana, sans-serif;">
+<label class="top" for="nome">Nome (opcional)</label>
+<input autocomplete="name" id="nome" name="nome" placeholder="Seu nome" type="text"/>
+</div>
+<div style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<label class="top" for="regional">Unidade/Regional (opcional)</label>
+<input id="regional" name="regional" placeholder="Ex.: Agência/UF" type="text"/>
+</div>
+</div>
+<!-- Linhas de estrelas -->
+<div class="row" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div class="label" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<strong>Avaliação Geral</strong>
+</div>
+<div class="rating" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-label="Avaliação geral (1 a 5)" class="stars" role="radiogroup" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<!-- Importante: radios em ordem 5→1 com direction:rtl -->
+<input id="geral-5" name="geral" type="radio" value="5"/><label aria-label="5 estrelas" for="geral-5">★</label>
+<input id="geral-4" name="geral" type="radio" value="4"/><label aria-label="4 estrelas" for="geral-4">★</label>
+<input id="geral-3" name="geral" type="radio" value="3"/><label aria-label="3 estrelas" for="geral-3">★</label>
+<input id="geral-2" name="geral" type="radio" value="2"/><label aria-label="2 estrelas" for="geral-2">★</label>
+<input id="geral-1" name="geral" type="radio" value="1"/><label aria-label="1 estrela" for="geral-1">★</label>
+</div>
+<span class="value-badge">0/5</span>
+</div>
+</div>
+<div class="row" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div class="label" style="background-color: white; color: black; font-family: Verdana, sans-serif;"><strong>Relevância dos Conteúdos</strong></div>
+<div class="rating" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-label="Relevância dos conteúdos" class="stars" role="radiogroup" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<input id="conteudos-5" name="conteudos" type="radio" value="5"/><label for="conteudos-5">★</label>
+<input id="conteudos-4" name="conteudos" type="radio" value="4"/><label for="conteudos-4">★</label>
+<input id="conteudos-3" name="conteudos" type="radio" value="3"/><label for="conteudos-3">★</label>
+<input id="conteudos-2" name="conteudos" type="radio" value="2"/><label for="conteudos-2">★</label>
+<input id="conteudos-1" name="conteudos" type="radio" value="1"/><label for="conteudos-1">★</label>
+</div>
+<span class="value-badge">0/5</span>
+</div>
+</div>
+<div class="row" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div class="label" style="background-color: white; color: black; font-family: Verdana, sans-serif;"><strong>Qualidade dos Palestrantes</strong></div>
+<div class="rating" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-label="Qualidade dos palestrantes" class="stars" role="radiogroup" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<input id="palestrantes-5" name="palestrantes" type="radio" value="5"/><label for="palestrantes-5">★</label>
+<input id="palestrantes-4" name="palestrantes" type="radio" value="4"/><label for="palestrantes-4">★</label>
+<input id="palestrantes-3" name="palestrantes" type="radio" value="3"/><label for="palestrantes-3">★</label>
+<input id="palestrantes-2" name="palestrantes" type="radio" value="2"/><label for="palestrantes-2">★</label>
+<input id="palestrantes-1" name="palestrantes" type="radio" value="1"/><label for="palestrantes-1">★</label>
+</div>
+<span class="value-badge">0/5</span>
+</div>
+</div>
+<div class="row" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div class="label" style="background-color: white; color: black; font-family: Verdana, sans-serif;"><strong>Organização e Logística</strong></div>
+<div class="rating" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-label="Organização e logística" class="stars" role="radiogroup" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<input id="organizacao-5" name="organizacao" type="radio" value="5"/><label for="organizacao-5">★</label>
+<input id="organizacao-4" name="organizacao" type="radio" value="4"/><label for="organizacao-4">★</label>
+<input id="organizacao-3" name="organizacao" type="radio" value="3"/><label for="organizacao-3">★</label>
+<input id="organizacao-2" name="organizacao" type="radio" value="2"/><label for="organizacao-2">★</label>
+<input id="organizacao-1" name="organizacao" type="radio" value="1"/><label for="organizacao-1">★</label>
+</div>
+<span class="value-badge">0/5</span>
+</div>
+</div>
+<div class="row" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div class="label" style="background-color: white; color: black; font-family: Verdana, sans-serif;"><strong>Coffee breaks e Almoço</strong></div>
+<div class="rating" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-label="Coffee Breaks e almoço" class="stars" role="radiogroup" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<input id="alimentos-5" name="alimentos" type="radio" value="5"/><label for="alimentos-5">★</label>
+<input id="alimentos-4" name="alimentos" type="radio" value="4"/><label for="alimentos-4">★</label>
+<input id="alimentos-3" name="alimentos" type="radio" value="3"/><label for="alimentos-3">★</label>
+<input id="alimentos-2" name="alimentos" type="radio" value="2"/><label for="alimentos-2">★</label>
+<input id="alimentos-1" name="alimentos" type="radio" value="1"/><label for="alimentos-1">★</label>
+</div>
+<span class="value-badge">0/5</span>
+</div>
+</div>
+<div class="row" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div class="label" style="background-color: white; color: black; font-family: Verdana, sans-serif;"><strong>Infraestrutura do local</strong></div>
+<div class="rating" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-label="Infraestrutura do local" class="stars" role="radiogroup" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<input id="infra-5" name="infraestrutura" type="radio" value="5"/><label for="infra-5">★</label>
+<input id="infra-4" name="infraestrutura" type="radio" value="4"/><label for="infra-4">★</label>
+<input id="infra-3" name="infraestrutura" type="radio" value="3"/><label for="infra-3">★</label>
+<input id="infra-2" name="infraestrutura" type="radio" value="2"/><label for="infra-2">★</label>
+<input id="infra-1" name="infraestrutura" type="radio" value="1"/><label for="infra-1">★</label>
+</div>
+<span class="value-badge">0/5</span>
+</div>
+</div>
+<div class="row" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div class="label" style="background-color: white; color: black; font-family: Verdana, sans-serif;"><strong>Duração e Ritmo</strong></div>
+<div class="rating" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-label="Duração e ritmo" class="stars" role="radiogroup" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<input id="duracao-5" name="duracao" type="radio" value="5"/><label for="duracao-5">★</label>
+<input id="duracao-4" name="duracao" type="radio" value="4"/><label for="duracao-4">★</label>
+<input id="duracao-3" name="duracao" type="radio" value="3"/><label for="duracao-3">★</label>
+<input id="duracao-2" name="duracao" type="radio" value="2"/><label for="duracao-2">★</label>
+<input id="duracao-1" name="duracao" type="radio" value="1"/><label for="duracao-1">★</label>
+</div>
+<span class="value-badge">0/5</span>
+</div>
+</div>
+<div class="row" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div class="label" style="background-color: white; color: black; font-family: Verdana, sans-serif;"><strong>Materiais e Brindes</strong></div>
+<div class="rating" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-label="Materiais e brindes" class="stars" role="radiogroup" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<input id="materiais-5" name="materiais" type="radio" value="5"/><label for="materiais-5">★</label>
+<input id="materiais-4" name="materiais" type="radio" value="4"/><label for="materiais-4">★</label>
+<input id="materiais-3" name="materiais" type="radio" value="3"/><label for="materiais-3">★</label>
+<input id="materiais-2" name="materiais" type="radio" value="2"/><label for="materiais-2">★</label>
+<input id="materiais-1" name="materiais" type="radio" value="1"/><label for="materiais-1">★</label>
+</div>
+<span class="value-badge">0/5</span>
+</div>
+</div>
+<!-- Perguntas de texto adicionais (logo abaixo de Materiais e Brindes) -->
+<div style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<label class="top" for="pratica_regiao">Descreva de forma objetiva como o evento agregou valor às operações da sua empresa na região:</label>
+<textarea id="pratica_regiao" name="pratica_regiao" placeholder="Escreva sua resposta..."></textarea>
+</div>
+<div style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<label class="top" for="nao_abordado">Há algo essencial que não foi abordado pelos palestrantes do evento?</label>
+<textarea id="nao_abordado" name="nao_abordado" placeholder="Escreva sua resposta..."></textarea>
+</div>
+<!-- NPS -->
+<div class="card" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<div aria-labelledby="nps_titulo" class="nps-block" role="group" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<label class="top" for="nps" id="nps_titulo">
+              Em uma escala de 0 a 10, qual a probabilidade de você indicar a nossa Consultoria para outros profissionais do ramo?
+            </label>
+<div aria-label="NPS (0 a 10)" class="nps-options" style="background-color: white; color: black; font-family: Verdana, sans-serif; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 10px; text-align: center;">
+<!-- 0 a 10 -->
+<input id="nps-0" name="nps" type="radio" value="0"/><label for="nps-0">0</label>
+<input id="nps-1" name="nps" type="radio" value="1"/><label for="nps-1">1</label>
+<input id="nps-2" name="nps" type="radio" value="2"/><label for="nps-2">2</label>
+<input id="nps-3" name="nps" type="radio" value="3"/><label for="nps-3">3</label>
+<input id="nps-4" name="nps" type="radio" value="4"/><label for="nps-4">4</label>
+<input id="nps-5" name="nps" type="radio" value="5"/><label for="nps-5">5</label>
+<input id="nps-6" name="nps" type="radio" value="6"/><label for="nps-6">6</label>
+<input id="nps-7" name="nps" type="radio" value="7"/><label for="nps-7">7</label>
+<input id="nps-8" name="nps" type="radio" value="8"/><label for="nps-8">8</label>
+<input id="nps-9" name="nps" type="radio" value="9"/><label for="nps-9">9</label>
+<input id="nps-10" name="nps" type="radio" value="10"/><label for="nps-10">10</label>
+</div>
+<div class="nps-scale" style="background-color: white; color: black; font-family: Verdana, sans-serif; display: flex; justify-content: space-between; padding: 0 20%; text-align: center;">
+<span>Nada provável (0)</span>
+<span>Muito provável (10)</span>
+</div>
+</div>
+</div>
+<!-- Observações gerais -->
+<div style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<label class="top" for="observacoes">Observações / Sugestões</label>
+<textarea id="observacoes" name="observacoes" placeholder="Deixe seus comentários aqui..."></textarea>
+</div>
+<!-- Ações (somente visuais) -->
+<div class="actions" style="background-color: white; color: black; font-family: Verdana, sans-serif;">
+<button class="btn" type="button">Enviar</button>
+</div></form>
+</section>
+<footer>© BBConsultores Summit 2025</footer>
+</main>
+<!-- JS leve só para exibir "X/5" e valor do NPS (sem salvar/enviar) -->
+<script>
+    (function(){
+      // Atualiza badges de estrelas (X/5)
+      document.querySelectorAll('.row .rating').forEach(r=>{
+        const radios = r.querySelectorAll('input[type="radio"]');
+        const badge = r.querySelector('.value-badge');
+        const update = ()=>{
+          const checked = r.querySelector('input[type="radio"]:checked');
+          const val = checked ? checked.value : 0;
+          if(badge) badge.textContent = `${val}/5`;
+        };
+        radios.forEach(rd=> rd.addEventListener('change', update));
+        update();
+      });
 
-  <form action="https://formspree.io/f/meopezjv" method="POST">
-    <label for="nome">Nome (opcional):</label>
-    <input type="text" name="nome" id="nome">
-
-    <label for="unidade">Unidade/Regional (opcional):</label>
-    <input type="text" name="unidade" id="unidade">
-
-    <label for="avaliacao_geral">Avaliação Geral (0 a 5):</label>
-    <input type="number" name="avaliacao_geral" id="avaliacao_geral" min="0" max="5">
-
-    <label for="relevancia">Relevância dos Conteúdos (0 a 5):</label>
-    <input type="number" name="relevancia_conteudos" id="relevancia" min="0" max="5">
-
-    <label for="palestrantes">Qualidade dos Palestrantes (0 a 5):</label>
-    <input type="number" name="qualidade_palestrantes" id="palestrantes" min="0" max="5">
-
-    <label for="logistica">Organização e Logística (0 a 5):</label>
-    <input type="number" name="organizacao_logistica" id="logistica" min="0" max="5">
-
-    <label for="coffee">Coffee breaks e Almoço (0 a 5):</label>
-    <input type="number" name="coffee_almoco" id="coffee" min="0" max="5">
-
-    <label for="infraestrutura">Infraestrutura do local (0 a 5):</label>
-    <input type="number" name="infraestrutura" id="infraestrutura" min="0" max="5">
-
-    <label for="duracao">Duração e Ritmo (0 a 5):</label>
-    <input type="number" name="duracao_ritmo" id="duracao" min="0" max="5">
-
-    <label for="materiais">Materiais e Brindes (0 a 5):</label>
-    <input type="number" name="materiais_brindes" id="materiais" min="0" max="5">
-
-    <label for="valor">Como o evento agregou valor às operações da sua empresa?</label>
-    <textarea name="valor_agregado" id="valor" rows="4"></textarea>
-
-    <label for="faltante">Algo essencial não abordado pelos palestrantes?</label>
-    <textarea name="conteudo_faltante" id="faltante" rows="4"></textarea>
-
-    <label for="indicacao">Probabilidade de indicar a consultoria (0 a 10):</label>
-    <input type="number" name="indicacao" id="indicacao" min="0" max="10">
-
-    <label for="observacoes">Observações / Sugestões:</label>
-    <textarea name="observacoes" id="observacoes" rows="4"></textarea>
-
-    <button type="submit">Enviar</button>
-  </form>
-
-  <footer>© BBConsultores Summit 2025</footer>
-</body>
-</html>
+      
+    })();
+  </script>
+</body></html>
