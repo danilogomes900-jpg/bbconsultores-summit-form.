@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pesquisa de Satisfação – BBConsultores Summit 2025</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background-color: #f9f9f9;
+    }
+    h1, h2, h3 {
+      color: #003366;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      max-width: 600px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      padding: 0.5em;
+      font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 0.7em;
+      background-color: #003366;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button:hover {
+      background-color: #0055a5;
+    }
+    footer {
+      margin-top: 2em;
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>BBConsultores Summit 2025</h1>
+  <h2>Pesquisa de Satisfação</h2>
+  <h3>⭐ Formulário de Avaliação</h3>
+
+  <form action="https://formspree.io/f/meopezjv" method="POST">
+    <label for="nome">Nome (opcional):</label>
+    <input type="text" name="nome" id="nome">
+
+    <label for="unidade">Unidade/Regional (opcional):</label>
+    <input type="text" name="unidade" id="unidade">
+
+    <label for="avaliacao_geral">Avaliação Geral (0 a 5):</label>
+    <input type="number" name="avaliacao_geral" id="avaliacao_geral" min="0" max="5">
+
+    <label for="relevancia">Relevância dos Conteúdos (0 a 5):</label>
+    <input type="number" name="relevancia_conteudos" id="relevancia" min="0" max="5">
+
+    <label for="palestrantes">Qualidade dos Palestrantes (0 a 5):</label>
+    <input type="number" name="qualidade_palestrantes" id="palestrantes" min="0" max="5">
+
+    <label for="logistica">Organização e Logística (0 a 5):</label>
+    <input type="number" name="organizacao_logistica" id="logistica" min="0" max="5">
+
+    <label for="coffee">Coffee breaks e Almoço (0 a 5):</label>
+    <input type="number" name="coffee_almoco" id="coffee" min="0" max="5">
+
+    <label for="infraestrutura">Infraestrutura do local (0 a 5):</label>
+    <input type="number" name="infraestrutura" id="infraestrutura" min="0" max="5">
+
+    <label for="duracao">Duração e Ritmo (0 a 5):</label>
+    <input type="number" name="duracao_ritmo" id="duracao" min="0" max="5">
+
+    <label for="materiais">Materiais e Brindes (0 a 5):</label>
+    <input type="number" name="materiais_brindes" id="materiais" min="0" max="5">
+
+    <label for="valor">Como o evento agregou valor às operações da sua empresa?</label>
+    <textarea name="valor_agregado" id="valor" rows="4"></textarea>
+
+    <label for="faltante">Algo essencial não abordado pelos palestrantes?</label>
+    <textarea name="conteudo_faltante" id="faltante" rows="4"></textarea>
+
+    <label for="indicacao">Probabilidade de indicar a consultoria (0 a 10):</label>
+    <input type="number" name="indicacao" id="indicacao" min="0" max="10">
+
+    <label for="observacoes">Observações / Sugestões:</label>
+    <textarea name="observacoes" id="observacoes" rows="4"></textarea>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <footer>© BBConsultores Summit 2025</footer>
+</body>
+</html>
